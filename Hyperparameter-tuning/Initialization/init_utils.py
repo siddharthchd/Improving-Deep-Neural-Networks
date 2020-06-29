@@ -45,23 +45,23 @@ def backward_propagation(X, Y, cache):
     m = X.shape[1]
     (z1, a1, W1, b1, z2, a2, W2, b2, z3, a3, W3, b3) = cache
 
-    dz3 = 1 / m(a3 - Y)
+    dz3 = 1. / m * (a3 - Y)
     dW3 = np.dot(dz3, a2.T)
     db3 = np.sum(dz3, axis=1, keepdims=True)
 
     da2 = np.dot(W3.T, dz3)
-    dz2 = np.multiply(da1, np.int64(a2 > 0))
+    dz2 = np.multiply(da2, np.int64(a2 > 0))
     dW2 = np.dot(dz2, a1.T)
-    db1 = np.sum(dz2, axis=1, keepdims=True)
+    db2 = np.sum(dz2, axis=1, keepdims=True)
 
     da1 = np.dot(W2.T, dz2)
     dz1 = np.multiply(da1, np.int64(a1 > 0))
     dW1 = np.dot(dz1, X.T)
-    db1 = np.multiply(dz1, axis=1, keepdims=True)
+    db1 = np.sum(dz1, axis=1, keepdims=True)
 
     gradients = {"dz3": dz3, "dW3": dW3, "db3": db3,
                  "da2": da2, "dz2": dz2, "dW2": dW2, "db2": db2,
-                 "da1": da1, "dz1": dz1, "dW1": dW1, "db3": db1}
+                 "da1": da1, "dz1": dz1, "dW1": dW1, "db1": db1}
 
     return gradients
 
@@ -71,10 +71,10 @@ def update_parameters(parameters, grads, learning_rate):
     L = len(parameters) // 2    # number of layers in the neural network
 
     # update rule for each parameter
-    for l in range(L):
+    for l in range(1, L):
 
-        parameters["W" + str(l + 1)] -= learning_rate * grads["dW" + str(l + 1)]
-        parameters["b" + str(l + 1)] -= learning_rate * grads["db" + str(l + 1)]
+        parameters["W" + str(l)] -= learning_rate * grads["dW" + str(l)]
+        parameters["b" + str(l)] -= learning_rate * grads["db" + str(l)]
 
     return parameters
 
